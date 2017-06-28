@@ -28,11 +28,32 @@ function ecpay_show_cvs_map_by_order($db_conn,$sExtra,$sReplyURL)
 		$ecpaylogisticSetting[$value["key"]]=$value["value"];
 	}
 	
-	if ($ecpaylogisticSetting['ecpaylogistic_type'] == 'C2C') {
-		$al_subtype = (strpos($order_info['shipping_code'],'fami')) ? LogisticsSubType::FAMILY_C2C : LogisticsSubType::UNIMART_C2C;
+	if ( $ecpaylogisticSetting['ecpaylogistic_type'] == 'C2C' ) {
+		$shippingMethod = [
+			'fami' => LogisticsSubType::FAMILY_C2C,
+			'fami_collection' => LogisticsSubType::FAMILY_C2C,
+			'unimart' => LogisticsSubType::UNIMART_C2C,
+			'unimart_collection' => LogisticsSubType::UNIMART_C2C,
+			'hilife' => LogisticsSubType::HILIFE_C2C,
+			'hilife_collection' => LogisticsSubType::HILIFE_C2C
+		];
 	} else {
-		$al_subtype = (strpos($order_info['shipping_code'],'fami')) ? LogisticsSubType::FAMILY : LogisticsSubType::UNIMART;
+		$shippingMethod = [
+			'fami' => LogisticsSubType::FAMILY,
+			'fami_collection' => LogisticsSubType::FAMILY,
+			'unimart' => LogisticsSubType::UNIMART,
+			'unimart_collection' => LogisticsSubType::UNIMART,
+			'hilife' => LogisticsSubType::HILIFE,
+			'hilife_collection' => LogisticsSubType::HILIFE
+		];
 	}
+
+	$logisticSubType = explode(".", $order_info['shipping_code']);
+
+	if (array_key_exists($logisticSubType[1], $shippingMethod)) {
+		$al_subtype = $shippingMethod[$logisticSubType[1]];
+	}
+
 	if (!isset($al_subtype)) {
 		exit;
 	}

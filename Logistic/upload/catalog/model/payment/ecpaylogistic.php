@@ -5,7 +5,7 @@ class ModelPaymentecpaylogistic extends Model {
 		
 		$method_data = array();
 		
-		if(isset($this->session->data["shipping_methods"]["ecpaylogistic"]) && ($this->session->data["shipping_method"]["code"] == 'ecpaylogistic.unimart_collection' || $this->session->data["shipping_method"]["code"] == 'ecpaylogistic.fami_collection')){
+		if(isset($this->session->data["shipping_methods"]["ecpaylogistic"]) && ($this->session->data["shipping_method"]["code"] == 'ecpaylogistic.unimart_collection' || $this->session->data["shipping_method"]["code"] == 'ecpaylogistic.fami_collection' || $this->session->data["shipping_method"]["code"] == 'ecpaylogistic.hilife_collection')){
      		$method_data = array( 
         		'code'       => 'ecpaylogistic',
         		'title'      => $this->language->get('text_title'),

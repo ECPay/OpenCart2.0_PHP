@@ -32,6 +32,8 @@ class ControllerPaymentecpayLogistic extends Controller
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_unimart_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_fami_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_fami_collection_status' , `value` = '0';");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_hilife_status' , `value` = '0';");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_hilife_collection_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_unimart_collection_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_order_status' , `value` = '1';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_mid' , `value` = '2000933';");

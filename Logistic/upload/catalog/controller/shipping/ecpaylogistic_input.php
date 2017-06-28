@@ -10,6 +10,10 @@ if (isset($quote['unimart']['Extra'])) {
 	$extra = $quote['fami']['Extra'];
 } elseif (isset($quote['fami_collection']['Extra'])) {
 	$extra = $quote['fami_collection']['Extra'];
+} elseif (isset($quote['hilife']['Extra'])) {
+	$extra = $quote['hilife']['Extra'];
+} elseif (isset($quote['hilife_collection']['Extra'])) {
+	$extra = $quote['hilife_collection']['Extra'];
 }
 ?>
 <div class="ecpaylogistic-control-area" style="display:none;">

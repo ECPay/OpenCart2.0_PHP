@@ -17,13 +17,21 @@ class ControllerShippingecpayLogistic extends Controller
             if ($this->request->post['ecpaylogistic_fami_collection_status'] != '1') {
                 unset($this->request->post['ecpaylogistic_fami_collection_fee']);
             }
+
+            if ($this->request->post['ecpaylogistic_hilife_collection_status'] != '1') {
+                unset($this->request->post['ecpaylogistic_hilife_collection_fee']);
+            }
 			
-           if ($this->request->post['ecpaylogistic_fami_status'] != '1') {
+            if ($this->request->post['ecpaylogistic_fami_status'] != '1') {
                 unset($this->request->post['ecpaylogistic_fami_fee']);
             }
 			
-           if ($this->request->post['ecpaylogistic_unimart_status'] != '1') {
+            if ($this->request->post['ecpaylogistic_unimart_status'] != '1') {
                 unset($this->request->post['ecpaylogistic_unimart_fee']);
+            }
+
+            if ($this->request->post['ecpaylogistic_hilife_status'] != '1') {
+                unset($this->request->post['ecpaylogistic_hilife_fee']);
             }
             
 			$this->model_setting_setting->editSetting('ecpaylogistic', $this->request->post);
@@ -43,6 +51,9 @@ class ControllerShippingecpayLogistic extends Controller
 		$data['text_fami_collection'] = $this->language->get('text_fami_collection');
 		$data['text_unimart'] = $this->language->get('text_unimart');
 		$data['text_fami'] = $this->language->get('text_fami');
+		$data['text_hilife_collection'] = $this->language->get('text_hilife_collection');
+		$data['text_hilife'] = $this->language->get('text_hilife');
+
 		$data['text_sender_cellphone'] = $this->language->get('text_sender_cellphone');
 
 		$data['entry_mid'] = $this->language->get('entry_mid');
@@ -62,8 +73,10 @@ class ControllerShippingecpayLogistic extends Controller
 		$data['button_cancel'] = $this->language->get('button_cancel');
 		$data['entry_UNIMART_Collection_fee'] = $this->language->get('entry_UNIMART_Collection_fee');
 		$data['entry_FAMI_Collection_fee'] = $this->language->get('entry_FAMI_Collection_fee');
+		$data['entry_HILIFE_Collection_fee'] = $this->language->get('entry_HILIFE_Collection_fee');
 		$data['entry_UNIMART_fee'] = $this->language->get('entry_UNIMART_fee');
 		$data['entry_FAMI_fee'] = $this->language->get('entry_FAMI_fee');
+		$data['entry_HILIFE_fee'] = $this->language->get('entry_HILIFE_fee');
 	
 		if (isset($this->error['error_warning'])) {
 			$data['error_warning'] = $this->error['error_warning'];
@@ -205,6 +218,11 @@ class ControllerShippingecpayLogistic extends Controller
 		} else {
 			$data['ecpaylogistic_fami_collection_fee'] = $this->config->get('ecpaylogistic_fami_collection_fee');
 		}
+		if (isset($this->request->post['ecpaylogistic_hilife_collection_fee'])) {
+			$data['ecpaylogistic_hilife_collection_fee'] = $this->request->post['ecpaylogistic_hilife_collection_fee'];
+		} else {
+			$data['ecpaylogistic_hilife_collection_fee'] = $this->config->get('ecpaylogistic_hilife_collection_fee');
+		}
 		if (isset($this->request->post['ecpaylogistic_geo_zone_id'])) {
 			$data['ecpaylogistic_geo_zone_id'] = $this->request->post['ecpaylogistic_geo_zone_id'];
 		} else {
@@ -230,10 +248,20 @@ class ControllerShippingecpayLogistic extends Controller
 		} else {
 			$data['ecpaylogistic_fami_status'] = $this->config->get('ecpaylogistic_fami_status');
 		}
+		if (isset($this->request->post['ecpaylogistic_hilife_status'])) {
+			$data['ecpaylogistic_hilife_status'] = $this->request->post['ecpaylogistic_hilife_status'];
+		} else {
+			$data['ecpaylogistic_hilife_status'] = $this->config->get('ecpaylogistic_hilife_status');
+		}
 		if (isset($this->request->post['ecpaylogistic_fami_collection_status'])) {
 			$data['ecpaylogistic_fami_collection_status'] = $this->request->post['ecpaylogistic_status'];
 		} else {
 			$data['ecpaylogistic_fami_collection_status'] = $this->config->get('ecpaylogistic_fami_collection_status');
+		}
+		if (isset($this->request->post['ecpaylogistic_hilife_collection_status'])) {
+			$data['ecpaylogistic_hilife_collection_status'] = $this->request->post['ecpaylogistic_status'];
+		} else {
+			$data['ecpaylogistic_hilife_collection_status'] = $this->config->get('ecpaylogistic_hilife_collection_status');
 		}
 		if (isset($this->request->post['ecpaylogistic_unimart_fee'])) {
 			$data['ecpaylogistic_unimart_fee'] = $this->request->post['ecpaylogistic_unimart_fee'];
@@ -244,6 +272,11 @@ class ControllerShippingecpayLogistic extends Controller
 			$data['ecpaylogistic_fami_fee'] = $this->request->post['ecpaylogistic_fami_fee'];
 		} else {
 			$data['ecpaylogistic_fami_fee'] = $this->config->get('ecpaylogistic_fami_fee');
+		}
+		if (isset($this->request->post['ecpaylogistic_hilife_fee'])) {
+			$data['ecpaylogistic_hilife_fee'] = $this->request->post['ecpaylogistic_hilife_fee'];
+		} else {
+			$data['ecpaylogistic_hilife_fee'] = $this->config->get('ecpaylogistic_hilife_fee');
 		}
 		if (isset($this->request->post['ecpaylogistic_free_shipping_amount'])) {
 			$data['ecpaylogistic_free_shipping_amount'] = $this->request->post['ecpaylogistic_free_shipping_amount'];
@@ -317,9 +350,19 @@ class ControllerShippingecpayLogistic extends Controller
                 $this->error['FAMI_Collection_fee'] = $this->language->get('error_FAMI_Collection_fee');
             }
         }
+		if ($this->request->post['ecpaylogistic_hilife_collection_status'] == '1') {
+            if(!is_numeric($this->request->post['ecpaylogistic_hilife_collection_fee']) || $this->request->post['ecpaylogistic_hilife_collection_fee'] < 0){
+                $this->error['HILIFE_Collection_fee'] = $this->language->get('error_HILIFE_Collection_fee');
+            }
+        }
 		if ($this->request->post['ecpaylogistic_fami_status'] == '1') {
             if(!is_numeric($this->request->post['ecpaylogistic_fami_fee']) || $this->request->post['ecpaylogistic_fami_fee'] < 0){
                 $this->error['FAMI_fee'] = $this->language->get('error_FAMI_fee');
+            }
+        }
+		if ($this->request->post['ecpaylogistic_hilife_status'] == '1') {
+            if(!is_numeric($this->request->post['ecpaylogistic_hilife_fee']) || $this->request->post['ecpaylogistic_hilife_fee'] < 0){
+                $this->error['HILIFE_fee'] = $this->language->get('error_HILIFE_fee');
             }
         }
         if ($this->request->post['ecpaylogistic_unimart_status'] == '1') {
@@ -358,25 +401,39 @@ class ControllerShippingecpayLogistic extends Controller
 				$sFieldName = 'code';
 				if (!ecpay_column_exists($this->db, DB_PREFIX."setting", 'code')) {
 					$sFieldName = 'group';
-				} 
+				}
 				$get_ecpaylogistic_setting_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `" . $sFieldName . "` = 'ecpaylogistic'");
 				$ecpaylogisticSetting=array();
 				foreach($get_ecpaylogistic_setting_query->rows as $value){
 					$ecpaylogisticSetting[$value["key"]]=$value["value"];
 				}
+
 				if ( $ecpaylogisticSetting['ecpaylogistic_type'] == 'C2C' ) {
-					if (strpos($order_info['shipping_code'],"ecpaylogistic.fami") !== false) {
-						$_LogisticsSubType = LogisticsSubType::FAMILY_C2C;
-					} else {
-						$_LogisticsSubType = LogisticsSubType::UNIMART_C2C;
-					}
+					$shippingMethod = [
+						'fami' => LogisticsSubType::FAMILY_C2C,
+						'fami_collection' => LogisticsSubType::FAMILY_C2C,
+						'unimart' => LogisticsSubType::UNIMART_C2C,
+						'unimart_collection' => LogisticsSubType::UNIMART_C2C,
+						'hilife' => LogisticsSubType::HILIFE_C2C,
+						'hilife_collection' => LogisticsSubType::HILIFE_C2C
+					];
 				} else {
-					if (strpos($order_info['shipping_code'],"ecpaylogistic.fami") !== false) {
-						$_LogisticsSubType = LogisticsSubType::FAMILY;
-					} else {
-						$_LogisticsSubType = LogisticsSubType::UNIMART;
-					}
+					$shippingMethod = [
+						'fami' => LogisticsSubType::FAMILY,
+						'fami_collection' => LogisticsSubType::FAMILY,
+						'unimart' => LogisticsSubType::UNIMART,
+						'unimart_collection' => LogisticsSubType::UNIMART,
+						'hilife' => LogisticsSubType::HILIFE,
+						'hilife_collection' => LogisticsSubType::HILIFE
+					];
 				}
+
+				$logisticSubType = explode(".", $order_info['shipping_code']);
+
+				if (array_key_exists($logisticSubType[1], $shippingMethod)) {
+					$_LogisticsSubType = $shippingMethod[$logisticSubType[1]];
+				}
+
 				$_IsCollection = IsCollection::NO;
 				$_CollectionAmount = 0;
 				if (strpos($order_info['shipping_code'],"_collection") !== false) {
@@ -402,7 +459,7 @@ class ControllerShippingecpayLogistic extends Controller
 					$AL->HashIV = $ecpaylogisticSetting['ecpaylogistic_hashiv'];
 					$AL->Send = array(
 						'MerchantID' => $ecpaylogisticSetting['ecpaylogistic_mid'],
-						'MerchantTradeNo' => $order_id,
+						'MerchantTradeNo' => 'order' . date('YmdHis') . $order_id,
 						'MerchantTradeDate' => date('Y/m/d H:i:s'),
 						'LogisticsType' => LogisticsType::CVS,
 						'LogisticsSubType' => $_LogisticsSubType,
@@ -426,7 +483,7 @@ class ControllerShippingecpayLogistic extends Controller
 					if ($_IsCollection == IsCollection::NO) {
 						unset($AL->Send['CollectionAmount']);
 					}
-					if ($_LogisticsSubType != LogisticsSubType::UNIMART_C2C) {
+					if ($_LogisticsSubType != LogisticsSubType::UNIMART_C2C && $_LogisticsSubType != LogisticsSubType::HILIFE_C2C) {
 						unset($AL->Send['SenderCellPhone']);
 					}
 					$Result = $AL->BGCreateShippingOrder(); 
@@ -542,7 +599,9 @@ class ControllerShippingecpayLogistic extends Controller
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_unimart_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_fami_status' , `value` = '0';");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_hilife_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_fami_collection_status' , `value` = '0';");
+		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_hilife_collection_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_unimart_collection_status' , `value` = '0';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_order_status' , `value` = '1';");
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "setting` SET `store_id` = 0 , `" . $sFieldName . "` = 'ecpaylogistic' , `key` = 'ecpaylogistic_mid' , `value` = '2000933';");

@@ -101,6 +101,32 @@ class ModelShippingecpaylogistic extends Model {
 				$Extra['last_ecpaylogistic_shipping_code'] = 'fami_collection';
 			}
 
+			if ($ecpaylogisticSetting['ecpaylogistic_hilife_status']) {
+				$shipping_cost = ($isFreeShipping) ? 0 : $ecpaylogisticSetting['ecpaylogistic_hilife_fee'];
+				$quote_text = (strpos(VERSION, '2.2.') !== false) ? $this->currency->format($shipping_cost, $this->session->data['currency']) : $this->currency->format($shipping_cost);
+				$quote_data['hilife'] = array(
+						'code'         => 'ecpaylogistic.hilife',
+						'title'        => $this->language->get('text_hilife'),
+						'cost'         => $shipping_cost,
+						'tax_class_id' => 0,
+						'text'         => $quote_text,
+				);
+				$Extra['last_ecpaylogistic_shipping_code'] = 'hilife';
+			}
+			
+			if ($ecpaylogisticSetting['ecpaylogistic_hilife_collection_status']) {
+				$shipping_cost = ($isFreeShipping) ? 0 : $ecpaylogisticSetting['ecpaylogistic_hilife_collection_fee'];
+				$quote_text = (strpos(VERSION, '2.2.') !== false) ? $this->currency->format($shipping_cost, $this->session->data['currency']) : $this->currency->format($shipping_cost);
+				$quote_data['hilife_collection'] = array(
+						'code'         => 'ecpaylogistic.hilife_collection',
+						'title'        => $this->language->get('text_hilife_collection'),
+						'cost'         => $shipping_cost,
+						'tax_class_id' => 0,
+						'text'         => $quote_text,
+				);
+				$Extra['last_ecpaylogistic_shipping_code'] = 'hilife_collection';
+			}
+
 			unset($quote_text);
 			
 			if (!isset($quote_data)) {
@@ -117,7 +143,7 @@ class ModelShippingecpaylogistic extends Model {
 					'title'      => $this->language->get('heading_title'),
 					'quote'      => $quote_data,
 					'sort_order' => $this->config->get('ecpaylogistic_sort_order'),
-					'extra' => $Extra,
+					'extra' 	 => $Extra,
 					'error'      => false
 			);
 		}

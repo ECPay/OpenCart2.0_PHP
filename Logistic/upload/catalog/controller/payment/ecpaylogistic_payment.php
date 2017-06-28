@@ -9,7 +9,7 @@ if (isset($_SESSION["shipping_methods"]["ecpaylogistic"]) && isset($_SESSION["sh
                 }
         }
 }
-if($al_shipping_code == "ecpaylogistic.unimart_collection" || $al_shipping_code == "ecpaylogistic.fami_collection"){
+if($al_shipping_code == "ecpaylogistic.unimart_collection" || $al_shipping_code == "ecpaylogistic.fami_collection" || $al_shipping_code == "ecpaylogistic.hilife_collection"){
 ?>
         <script type="text/javascript">
         <!--
