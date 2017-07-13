@@ -100,14 +100,14 @@
 	}
 	
 	/**
-	 *  正式測試環境網址
+	 *  測試環境網址
 	 *
 	 * @author		https://www.ecpay.com.tw
 	 * @category	Options
 	 * @version		1.0.1012
 	 */
 	abstract class ECPayTestURL {
-        const CVS_MAP = 'https://logistics.ecpay.com.tw/Express/map';// 電子地圖(測試環境有問題，直接使用正式環境URL)
+        const CVS_MAP = 'https://logistics-stage.ecpay.com.tw/Express/map';// 電子地圖(測試環境有問題，直接使用正式環境URL)
 		const SHIPPING_ORDER = 'https://logistics-stage.ecpay.com.tw/Express/Create';// 物流訂單建立
 		const HOME_RETURN_ORDER = 'https://logistics-stage.ecpay.com.tw/Express/ReturnHome';// 宅配逆物流訂單
 		const UNIMART_RETURN_ORDER = 'https://logistics-stage.ecpay.com.tw/express/ReturnUniMartCVS';// 超商取貨逆物流訂單(統一超商B2C)

@@ -138,7 +138,7 @@ class ControllerShippingecpayLogistic extends Controller {
 			$sFieldName = 'group';
 		} 
 		$get_ecpaylogistic_setting_query = $this->db->query("SELECT * FROM " . DB_PREFIX . "setting WHERE `" . $sFieldName . "` = 'ecpaylogistic'");
-		$ecpaylogisticSetting=array();
+		$ecpaylogisticSetting = array();
 		foreach($get_ecpaylogistic_setting_query->rows as $value){
 			$ecpaylogisticSetting[$value["key"]]=$value["value"];
 		}
@@ -147,13 +147,37 @@ class ControllerShippingecpayLogistic extends Controller {
 			$AL->HashKey = $ecpaylogisticSetting['ecpaylogistic_hashkey'];
 			$AL->HashIV = $ecpaylogisticSetting['ecpaylogistic_hashiv'];
 			$AL->CheckOutFeedback($this->request->post);
-			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . (int)$this->request->post['MerchantTradeNo'] . "'" );
+			$orderID = (int)$this->request->post['MerchantTradeNo'];
+			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $orderID . "'" );
             $aOrder_Info_Tmp = $query->rows[0] ;
+
 			$sMsg = "綠界科技廠商管理後台物流訊息:<br>" . print_r($this->request->post, true);
 			if ($this->request->post['RtnCode'] == '2067' || $this->request->post['RtnCode'] == '3022') {
 				$aOrder_Info_Tmp['order_status_id'] = 5;
+
+				$shippingCode = explode('.', $aOrder_Info_Tmp['shipping_code']);
+				$shippingMethod = array(
+					'fami_collection',
+					'unimart_collection',
+					'hilife_collection'
+				);
+				if (in_array($shippingCode[1], $shippingMethod)) {
+		            // 判斷電子發票是否啟動 START
+					$nInvoice_Status  = $this->config->get('ecpayinvoice_status');
+					if($nInvoice_Status == 1)
+					{
+						$this->load->model('payment/ecpayinvoice');
+						$nInvoice_Autoissue = $this->config->get('ecpayinvoice_autoissue');
+						$sCheck_Invoice_SDK	= $this->model_payment_ecpayinvoice->check_invoice_sdk();
+						if( $nInvoice_Autoissue == 1 && $sCheck_Invoice_SDK != false )
+						{
+							$this->model_payment_ecpayinvoice->createInvoiceNo($orderID, $sCheck_Invoice_SDK);
+						}
+					}
+					// 判斷電子發票是否啟動 END
+				}
 			}
-			$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . (int)$this->request->post['MerchantTradeNo'] . "', order_status_id = '" . (int)$aOrder_Info_Tmp['order_status_id'] . "', notify = '0', comment = '" . $this->db->escape($sMsg) . "', date_added = NOW()");
+			$this->db->query("INSERT INTO " . DB_PREFIX . "order_history SET order_id = '" . $orderID . "', order_status_id = '" . (int)$aOrder_Info_Tmp['order_status_id'] . "', notify = '0', comment = '" . $this->db->escape($sMsg) . "', date_added = NOW()");
 			echo '1|OK';
 		} catch(Exception $e) {
 			echo '0|' . $e->getMessage();
