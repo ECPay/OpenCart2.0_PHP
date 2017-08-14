@@ -9,7 +9,7 @@
            <search position="top"><![CDATA[
            <p><strong><?php echo $text_comments; ?></strong></p>
            ]]></search>
-           <add><![CDATA[
+           <add><![CDATA[ 
            <?php include_once("catalog/controller/module/ecpayinvoice_input.php");?>
            ]]></add>
        </operation>

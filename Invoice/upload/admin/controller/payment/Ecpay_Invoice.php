@@ -1,5 +1,5 @@
 <?php
-/*
+/* 
 電子發票SDK
 版本:V1.0.0315
 @author Wesley
