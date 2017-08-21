@@ -5,8 +5,7 @@
 	 * @author		https://www.ecpay.com.tw
 	 * @version		1.0.1012
 	 */
-  
-  
+
 	/**
 	 *  物流類型
 	 *
@@ -14,7 +13,7 @@
 	 * @category	Options
 	 * @version		1.0.1012
 	 */
-	abstract class LogisticsType {		
+	abstract class LogisticsType {
 		const CVS = 'CVS';// 超商取貨
 		const HOME = 'Home';// 宅配
 	}
@@ -107,7 +106,7 @@
 	 * @version		1.0.1012
 	 */
 	abstract class ECPayTestURL {
-        const CVS_MAP = 'https://logistics-stage.ecpay.com.tw/Express/map';// 電子地圖(測試環境有問題，直接使用正式環境URL)
+        const CVS_MAP = 'https://logistics-stage.ecpay.com.tw/Express/map';// 電子地圖
 		const SHIPPING_ORDER = 'https://logistics-stage.ecpay.com.tw/Express/Create';// 物流訂單建立
 		const HOME_RETURN_ORDER = 'https://logistics-stage.ecpay.com.tw/Express/ReturnHome';// 宅配逆物流訂單
 		const UNIMART_RETURN_ORDER = 'https://logistics-stage.ecpay.com.tw/express/ReturnUniMartCVS';// 超商取貨逆物流訂單(統一超商B2C)
@@ -407,16 +406,10 @@
 				if (empty($this->PostParams['ReceiverPhone']) and empty($this->PostParams['ReceiverCellPhone'])) {
 					throw new Exception('ReceiverPhone or ReceiverCellPhone is required when LogisticsType is Home.');
 				}
-			} else if (
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::UNIMART or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::FAMILY or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::HILIFE or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::UNIMART_C2C or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::HILIFE_C2C
-			) {
-				// 物流子類型(LogisticsSubType)為統一超商(UNIMART)、全家(FAMILY)、萊爾富(HILIFE)、統一超商交貨便(UNIMARTC2C)、萊爾富富店到店(HILIFEC2C)時，收件人手機(ReceiverCellPhone)不可為空
+			} else {
+				// 物流子類型(LogisticsSubType)為統一超商(UNIMART)、全家(FAMILY)、萊爾富(HILIFE)、統一超商交貨便(UNIMARTC2C)、全家超商店到店(FAMILYC2C)、萊爾富富店到店(HILIFEC2C)時，收件人手機(ReceiverCellPhone)不可為空
 				if (empty($this->PostParams['ReceiverCellPhone'])) {
-					throw new Exception('ReceiverCellPhone is required when LogisticsSubType is UNIMART, FAMILY, HILIFE, UNIMARTC2C or HILIFEC2C.');
+					throw new Exception('ReceiverCellPhone is required.');
 				}
 			}
 
@@ -603,16 +596,10 @@
 				if (empty($this->PostParams['ReceiverPhone']) and empty($this->PostParams['ReceiverCellPhone'])) {
 					throw new Exception('ReceiverPhone or ReceiverCellPhone is required when LogisticsType is Home.');
 				}
-			} else if (
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::UNIMART or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::FAMILY or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::HILIFE or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::UNIMART_C2C or
-				$this->PostParams['LogisticsSubType'] == LogisticsSubType::HILIFE_C2C
-			) {
-				// 物流子類型(LogisticsSubType)為統一超商(UNIMART)、全家(FAMILY)、萊爾富(HILIFE)、統一超商交貨便(UNIMARTC2C)、萊爾富富店到店(HILIFEC2C)時，收件人手機(ReceiverCellPhone)不可為空
+			} else {
+				// 物流子類型(LogisticsSubType)為統一超商(UNIMART)、全家(FAMILY)、萊爾富(HILIFE)、統一超商交貨便(UNIMARTC2C)、全家超商店到店(FAMILYC2C)、萊爾富富店到店(HILIFEC2C)時，收件人手機(ReceiverCellPhone)不可為空
 				if (empty($this->PostParams['ReceiverCellPhone'])) {
-					throw new Exception('ReceiverCellPhone is required when LogisticsSubType is UNIMART, FAMILY, HILIFE, UNIMARTC2C or HILIFEC2C.');
+					throw new Exception('ReceiverCellPhone is required.');
 				}
 			}
 			
@@ -649,6 +636,11 @@
 			
 			// 產生 CheckMacValue
 			$this->PostParams['CheckMacValue'] = ECPay_CheckMacValue::generate($this->PostParams, $this->HashKey, $this->HashIV);
+
+			// urlencode
+			foreach($this->PostParams as $key => $value) {
+            	$this->PostParams[$key] = urlencode($value);
+			}
 			
             // 解析回傳結果
             // 正確：1|MerchantID=XXX&MerchantTradeNo=XXX&RtnCode=XXX&RtnMsg=XXX&AllPayLogisticsID=XXX&LogisticsType=XXX&LogisticsSubType=XXX&GoodsAmount=XXX&UpdateStatusDate=XXX&ReceiverName=XXX&ReceiverPhone=XXX&ReceiverCellPhone=XXX&ReceiverEmail=XXX&ReceiverAddress=XXX&CVSPaymentNo=XXX&CVSValidationNo=XXX &CheckMacValue=XXX
@@ -1310,7 +1302,6 @@
             $this->ValidateHashIV();
 			$this->ValidateID('MerchantID', $this->PostParams['MerchantID'], 10);
 			$this->ServiceURL = $this->GetURL('PRINT_TRADE_DOC');
-			$this->ValidateID('AllPayLogisticsID', $this->PostParams['AllPayLogisticsID'], 20);
 			$this->ValidateID('PlatformID', $this->PostParams['PlatformID'], 10, true);
 			
 			// 產生 CheckMacValue
@@ -1606,7 +1597,7 @@
 				$this->IsAllowEmpty($Name, $AllowEmpty);
 			} else {
 				// 格式檢查
-				$this->IsValidFormat($Name, '/^\(?\d{2}\)?\-?(\d{6,8})(#\d{1,6}){0,1}$/', $Value);
+				$this->IsValidFormat($Name, '/^\(?\d{2}\)?\-?\d{2,6}\-?\d{2,6}(#\d{1,6}){0,1}$/', $Value);
 			}
 		}
 
@@ -2253,7 +2244,7 @@
 			$PostHTML = $this->AddNextLine('<div style="text-align:center;">');
 			$PostHTML .= $this->AddNextLine('  <form id="ECPayForm" method="POST" action="' . $this->ServiceURL . '" target="' . $Target . '">');
 			foreach ($this->PostParams as $Name => $Value) {
-				$PostHTML .= $this->AddNextLine('    <input type="hidden" name="' . $Name . '" value="' . $Value . '" />');
+				$PostHTML .= $this->AddNextLine('    <input type="hidden" id="' . $Name . '" name="' . $Name . '" value="' . $Value . '" />');
 			}
 			if (!empty($ButtonDesc)) {
 				// 手動
@@ -2283,6 +2274,7 @@
 		}
 		
 		/**
+		
 		 *  解析 ECPay 回傳結果
 		 *
 		 * @author		https://www.ecpay.com.tw
@@ -2308,139 +2300,144 @@
 		}
 	}
 
-	class ECPay_CheckMacValue
-	{
-		/**
-		* 產生檢查碼
-		*/
-		static function generate($arParameters = array(), $HashKey = '', $HashIV = ''){
+    if (!class_exists('ECPay_CheckMacValue', true)) {
+		class ECPay_CheckMacValue
+		{
+			/**
+			* 產生檢查碼
+			*/
+			static function generate($arParameters = array(), $HashKey = '', $HashIV = ''){
 
-			$sMacValue = '' ;
+				$sMacValue = '' ;
 
-			if(isset($arParameters)){
-				
-				uksort($arParameters, array('ECPay_CheckMacValue','merchantSort'));
+				if(isset($arParameters)){
+					
+					unset($arParameters['CheckMacValue']);
+					uksort($arParameters, array('ECPay_CheckMacValue','merchantSort'));
 
-				// 組合字串
-				$sMacValue = 'HashKey=' . $HashKey ;
-				foreach($arParameters as $key => $value)
-				{
-					$sMacValue .= '&' . $key . '=' . $value ;
+					// 組合字串
+					$sMacValue = 'HashKey=' . $HashKey ;
+					foreach($arParameters as $key => $value)
+					{
+						$sMacValue .= '&' . $key . '=' . $value ;
+					}
+
+					$sMacValue .= '&HashIV=' . $HashIV ;
+
+					// URL Encode編碼     
+					$sMacValue = urlencode($sMacValue);
+
+					// 轉成小寫
+					$sMacValue = strtolower($sMacValue);
+
+					// 取代為與 dotNet 相符的字元
+					$sMacValue = ECPay_CheckMacValue::Replace_Symbol($sMacValue);
+
+					// 編碼
+					$sMacValue = md5($sMacValue);
+
+					$sMacValue = strtoupper($sMacValue);
 				}
 
-				$sMacValue .= '&HashIV=' . $HashIV ;
-
-				// URL Encode編碼     
-				$sMacValue = urlencode($sMacValue);
-
-				// 轉成小寫
-				$sMacValue = strtolower($sMacValue);
-
-				// 取代為與 dotNet 相符的字元
-				$sMacValue = ECPay_CheckMacValue::Replace_Symbol($sMacValue);
-
-				// 編碼
-				$sMacValue = md5($sMacValue);
-
-				$sMacValue = strtoupper($sMacValue);
+				return $sMacValue ;
 			}
 
-			return $sMacValue ;
-		}
-
-		/**
-		* 自訂排序使用
-		*/
-		private static function merchantSort($a,$b){
-			return strcasecmp($a, $b);
-		}
-
-	    /**
-		* 參數內特殊字元取代
-		* 傳入	$sParameters	參數
-		* 傳出	$sParameters	回傳取代後變數
-		*/
-		static function Replace_Symbol($sParameters){
-			if(!empty($sParameters)){
-				
-				$sParameters = str_replace('%2D', '-', $sParameters);
-				$sParameters = str_replace('%2d', '-', $sParameters);
-				$sParameters = str_replace('%5F', '_', $sParameters);
-				$sParameters = str_replace('%5f', '_', $sParameters);
-				$sParameters = str_replace('%2E', '.', $sParameters);
-				$sParameters = str_replace('%2e', '.', $sParameters);
-				$sParameters = str_replace('%21', '!', $sParameters);
-				$sParameters = str_replace('%2A', '*', $sParameters);
-				$sParameters = str_replace('%2a', '*', $sParameters);
-				$sParameters = str_replace('%28', '(', $sParameters);
-				$sParameters = str_replace('%29', ')', $sParameters);
+			/**
+			* 自訂排序使用
+			*/
+			private static function merchantSort($a,$b){
+				return strcasecmp($a, $b);
 			}
 
-			return $sParameters ;
-		}
+		    /**
+			* 參數內特殊字元取代
+			* 傳入	$sParameters	參數
+			* 傳出	$sParameters	回傳取代後變數
+			*/
+			static function Replace_Symbol($sParameters){
+				if(!empty($sParameters)){
+					
+					$sParameters = str_replace('%2D', '-', $sParameters);
+					$sParameters = str_replace('%2d', '-', $sParameters);
+					$sParameters = str_replace('%5F', '_', $sParameters);
+					$sParameters = str_replace('%5f', '_', $sParameters);
+					$sParameters = str_replace('%2E', '.', $sParameters);
+					$sParameters = str_replace('%2e', '.', $sParameters);
+					$sParameters = str_replace('%21', '!', $sParameters);
+					$sParameters = str_replace('%2A', '*', $sParameters);
+					$sParameters = str_replace('%2a', '*', $sParameters);
+					$sParameters = str_replace('%28', '(', $sParameters);
+					$sParameters = str_replace('%29', ')', $sParameters);
+				}
 
-		/**
-		* 參數內特殊字元還原
-		* 傳入	$sParameters	參數
-		* 傳出	$sParameters	回傳取代後變數
-		*/
-		static function Replace_Symbol_Decode($sParameters){
-			if(!empty($sParameters)){
-				
-				$sParameters = str_replace('-', '%2d', $sParameters);
-				$sParameters = str_replace('_', '%5f', $sParameters);
-				$sParameters = str_replace('.', '%2e', $sParameters);
-				$sParameters = str_replace('!', '%21', $sParameters);
-				$sParameters = str_replace('*', '%2a', $sParameters);
-				$sParameters = str_replace('(', '%28', $sParameters);
-				$sParameters = str_replace(')', '%29', $sParameters);
-				$sParameters = str_replace('+', '%20', $sParameters);
+				return $sParameters ;
 			}
 
-			return $sParameters ;
+			/**
+			* 參數內特殊字元還原
+			* 傳入	$sParameters	參數
+			* 傳出	$sParameters	回傳取代後變數
+			*/
+			static function Replace_Symbol_Decode($sParameters){
+				if(!empty($sParameters)){
+					
+					$sParameters = str_replace('-', '%2d', $sParameters);
+					$sParameters = str_replace('_', '%5f', $sParameters);
+					$sParameters = str_replace('.', '%2e', $sParameters);
+					$sParameters = str_replace('!', '%21', $sParameters);
+					$sParameters = str_replace('*', '%2a', $sParameters);
+					$sParameters = str_replace('(', '%28', $sParameters);
+					$sParameters = str_replace(')', '%29', $sParameters);
+					$sParameters = str_replace('+', '%20', $sParameters);
+				}
+
+				return $sParameters ;
+			}
 		}
 	}
 
-	class ECPay_IO
-	{
-		static function ServerPost($parameters ,$ServiceURL){
+    if (!class_exists('ECPay_IO', true)) {
+		class ECPay_IO
+		{
+			static function ServerPost($parameters ,$ServiceURL){
 
-		    $sSend_Info = '' ;
+			    $sSend_Info = '' ;
 
-		    // 組合字串
-			foreach($parameters as $key => $value)
-			{
-				if( $sSend_Info == '')
+			    // 組合字串
+				foreach($parameters as $key => $value)
 				{
-					$sSend_Info .= $key . '=' . $value ;
+					if( $sSend_Info == '')
+					{
+						$sSend_Info .= $key . '=' . $value ;
+					}
+					else
+					{
+						$sSend_Info .= '&' . $key . '=' . $value ;
+					}
 				}
-				else
-				{
-					$sSend_Info .= '&' . $key . '=' . $value ;
-				}
+
+			    $ch = curl_init();
+
+			    if (FALSE === $ch) {
+			        throw new Exception('curl failed to initialize');
+			    }
+			    
+			    curl_setopt($ch, CURLOPT_URL, $ServiceURL);
+			    curl_setopt($ch, CURLOPT_HEADER, FALSE);
+			    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
+			    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
+			    curl_setopt($ch, CURLOPT_POST, TRUE);
+			    curl_setopt($ch, CURLOPT_POSTFIELDS, $sSend_Info);
+			    $rs = curl_exec($ch);
+
+			    if (FALSE === $rs) {
+			        throw new Exception(curl_error($ch), curl_errno($ch));
+			    }
+
+			    curl_close($ch);
+
+			    return $rs;
 			}
-
-		    $ch = curl_init();
-
-		    if (FALSE === $ch) {
-		        throw new Exception('curl failed to initialize');
-		    }
-		    
-		    curl_setopt($ch, CURLOPT_URL, $ServiceURL);
-		    curl_setopt($ch, CURLOPT_HEADER, FALSE);
-		    curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-		    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, TRUE);
-		    curl_setopt($ch, CURLOPT_POST, TRUE);
-		    curl_setopt($ch, CURLOPT_POSTFIELDS, $sSend_Info);
-		    $rs = curl_exec($ch);
-
-		    if (FALSE === $rs) {
-		        throw new Exception(curl_error($ch), curl_errno($ch));
-		    }
-
-		    curl_close($ch);
-
-		    return $rs;
 		}
 	}
 ?>
