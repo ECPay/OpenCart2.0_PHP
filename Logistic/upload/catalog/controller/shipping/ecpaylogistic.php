@@ -147,9 +147,10 @@ class ControllerShippingecpayLogistic extends Controller {
 			$AL->HashKey = $ecpaylogisticSetting['ecpaylogistic_hashkey'];
 			$AL->HashIV = $ecpaylogisticSetting['ecpaylogistic_hashiv'];
 			$AL->CheckOutFeedback($this->request->post);
-			$orderID = (int)$this->request->post['MerchantTradeNo'];
+			$MerchantTradeNo = (($this->request->post['MerchantID']=='2000132') || ($this->request->post['MerchantID']=='2000933')) ? substr($this->request->post['MerchantTradeNo'], 14) : $this->request->post['MerchantTradeNo'];
+			$orderID = (int)$MerchantTradeNo;
 			$query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "order` WHERE order_id = '" . $orderID . "'" );
-            $aOrder_Info_Tmp = $query->rows[0] ;
+			$aOrder_Info_Tmp = $query->rows[0] ;
 
 			$sMsg = "綠界科技廠商管理後台物流訊息:<br>" . print_r($this->request->post, true);
 			if ($this->request->post['RtnCode'] == '2067' || $this->request->post['RtnCode'] == '3022') {
@@ -162,15 +163,13 @@ class ControllerShippingecpayLogistic extends Controller {
 					'hilife_collection'
 				);
 				if (in_array($shippingCode[1], $shippingMethod)) {
-		            // 判斷電子發票是否啟動 START
+					// 判斷電子發票是否啟動 START
 					$nInvoice_Status  = $this->config->get('ecpayinvoice_status');
-					if($nInvoice_Status == 1)
-					{
+					if ($nInvoice_Status == 1) {
 						$this->load->model('payment/ecpayinvoice');
 						$nInvoice_Autoissue = $this->config->get('ecpayinvoice_autoissue');
 						$sCheck_Invoice_SDK	= $this->model_payment_ecpayinvoice->check_invoice_sdk();
-						if( $nInvoice_Autoissue == 1 && $sCheck_Invoice_SDK != false )
-						{
+						if ( $nInvoice_Autoissue == 1 && $sCheck_Invoice_SDK != false ) {
 							$this->model_payment_ecpayinvoice->createInvoiceNo($orderID, $sCheck_Invoice_SDK);
 						}
 					}

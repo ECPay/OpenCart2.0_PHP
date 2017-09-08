@@ -453,13 +453,15 @@ class ControllerShippingecpayLogistic extends Controller
 					$_SenderCellPhone = $ecpaylogisticSetting['ecpaylogistic_sender_cellphone'];
 				}
 				
+				$MerchantTradeNo = (($ecpaylogisticSetting['ecpaylogistic_mid']=='2000132') || ($ecpaylogisticSetting['ecpaylogistic_mid']=='2000933')) ? (date('YmdHis') . $order_id) : $order_id;
+				
 				try {
 					$AL = new ECPayLogistics();
 					$AL->HashKey = $ecpaylogisticSetting['ecpaylogistic_hashkey'];
 					$AL->HashIV = $ecpaylogisticSetting['ecpaylogistic_hashiv'];
 					$AL->Send = array(
 						'MerchantID' => $ecpaylogisticSetting['ecpaylogistic_mid'],
-						'MerchantTradeNo' => 'order' . date('YmdHis') . $order_id,
+						'MerchantTradeNo' => $MerchantTradeNo,
 						'MerchantTradeDate' => date('Y/m/d H:i:s'),
 						'LogisticsType' => LogisticsType::CVS,
 						'LogisticsSubType' => $_LogisticsSubType,
